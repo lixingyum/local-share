@@ -11,6 +11,7 @@ from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key'
+#客户端 JS 执行 const socket = io();，自动向 当前页面同源 的服务器发起 WebSocket 连接（默认路径 /socket.io/）。
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 UPLOAD_FOLDER = 'shared_files'
@@ -44,6 +45,7 @@ def get_local_ips():
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.settimeout(1)
+        # 连接外部ip，但不发送数据
         s.connect(('8.8.8.8', 80))
         ip = s.getsockname()[0]
         ips.add(ip)
@@ -254,7 +256,7 @@ HTML_TEMPLATE = '''
     </div>
 </div>
 
-<script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+<script src="/static/socket.io.min.js"></script>
 <script>
     const socket = io();
     const composeBox = document.getElementById('compose-box');
