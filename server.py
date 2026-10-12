@@ -8,6 +8,16 @@ from datetime import datetime, timedelta
 from flask import Flask, request, send_from_directory, jsonify, render_template_string, make_response
 from flask_socketio import SocketIO, emit
 from werkzeug.utils import secure_filename
+import sys
+import io
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
+sys.stdout.reconfigure(line_buffering=True)
+sys.stderr.reconfigure(line_buffering=True)
+
+import logging
+logging.basicConfig(level=logging.INFO, format='%(message)s')
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key'
@@ -663,6 +673,14 @@ def get_text(filename):
     return send_from_directory(UPLOAD_FOLDER, safe_name, mimetype='text/plain; charset=utf-8')
 
 if __name__ == '__main__':
-    print(f"本机管理 IP 集合: {LOCAL_IPS}")
-    print("启动服务...")
-    socketio.run(app, host='0.0.0.0', port=4001, debug=True, allow_unsafe_werkzeug=True)
+    print(f"本机管理 IP 集合: {LOCAL_IPS}", flush=True)
+    print("启动服务...", flush=True)
+    socketio.run(
+        app,
+        host='0.0.0.0',
+        port=4001,
+        debug=False,              # 关闭 debug，避免重复打印
+        allow_unsafe_werkzeug=True
+    )
+
+
